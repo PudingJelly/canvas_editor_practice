@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Fabric.js 텍스트 박스 크기 조절 예제</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
+</head>
+<body>
+    <div>
+        <select id="font-family">
+            <option value="Arial">Arial</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Times New Roman">Times New Roman</option>
+        </select>
+
+        <input type="number" id="font-size" value="20">
+        
+        <input type="color" id="text-color" value="#000000">
+        
+        <button id="bold-button">굵게</button>
+        <button id="italic-button">기울임</button>
+        
+        <select id="text-align">
+            <option value="left">왼쪽 정렬</option>
+            <option value="center">가운데 정렬</option>
+            <option value="right">오른쪽 정렬</option>
+        </select>
+    </div>
+    <canvas id="canvas" width="700" height="500" style="border: 1px solid black;"></canvas>
+
+    <script>
+        var canvas = new fabric.Canvas('canvas');
+
+        var layersFromServer = [
+            { text: '첫 번째 텍스트', left: 50, top: 50 },
+            { text: '두 번째 텍스트', left: 150, top: 100 },
+            { text: '세 번째 텍스트', left: 250, top: 150 }
+            // ... 추가적인 레이어 정보를 서버에서 받아온다고 가정합니다.
+        ];
+
+        // 텍스트 박스 생성
+        layersFromServer.forEach(function(layer) {
+            var textbox = new fabric.Textbox(layer.text, {
+                left: layer.left,
+                top: layer.top,
+                width: 100,
+                fontSize: 20,
+                textAlign: 'left',
+                fill: 'black',
+                borderColor: 'black',
+                cornerColor: 'blue',
+                cornerSize: 6,
+                transparentCorners: false,
+            });
+            // 캔버스에 텍스트박스 추가
+            canvas.add(textbox);
+
+            textbox.setControlsVisibility({
+                tl: true,
+                tr: true,
+                br: true,
+                bl: true,
+                ml: true,
+                mt: true,
+                mr: true,
+                mb: true,
+                mtr: false
+            });
+
+            // 폰트 변경
+            document.getElementById('font-family').addEventListener('change', function(e) {
+                var activeObject = canvas.getActiveObject();
+                if (activeObject && activeObject.type === 'textbox') {
+                    activeObject.set('fontFamily', e.target.value);
+                    canvas.renderAll();
+                }
+            });
+
+            // 폰트사이즈 변경
+            document.getElementById('font-size').addEventListener('change', function(e) {
+                var activeObject = canvas.getActiveObject();
+                if (activeObject && activeObject.type === 'textbox') {
+                    activeObject.set('fontSize', parseInt(e.target.value, 10));
+                    canvas.renderAll();
+                }
+            });
+
+            // 폰트색 변경
+            document.getElementById('text-color').addEventListener('input', function(e) {
+                var activeObject = canvas.getActiveObject();
+                if (activeObject && activeObject.type === 'textbox') {
+                    activeObject.set('fill', e.target.value);
+                    canvas.renderAll();
+                }
+            });
+
+            // 폰트굵기 설정
+            document.getElementById('bold-button').addEventListener('click', function() {
+                var activeObject = canvas.getActiveObject();
+                if (activeObject && activeObject.type === 'textbox') {
+                    var isBold = !!activeObject.get('fontWeight') && activeObject.get('fontWeight') === 'bold';
+                    activeObject.set('fontWeight', isBold ? 'normal' : 'bold');
+                    canvas.renderAll();
+                }
+            });
+
+            // 폰트기울기 설정
+            document.getElementById('italic-button').addEventListener('click', function() {
+                var activeObject = canvas.getActiveObject();
+                if (activeObject && activeObject.type === 'textbox') {
+                    var isItalic = !!activeObject.get('fontStyle') && activeObject.get('fontStyle') === 'italic';
+                    activeObject.set('fontStyle', isItalic ? 'normal' : 'italic');
+                    canvas.renderAll();
+                }
+            });
+
+            // 폰트정렬 설정
+            document.getElementById('text-align').addEventListener('change', function(e) {
+                var activeObject = canvas.getActiveObject();
+                if (activeObject && activeObject.type === 'textbox') {
+                    activeObject.set('textAlign', e.target.value);
+                    canvas.renderAll();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
